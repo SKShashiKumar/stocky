@@ -1,17 +1,17 @@
 const express = require("express");
 const app = express();
 const db = require("mongoose");
-const port = 8000;
 const cors = require("cors");
 const CoinImport = require("./models/coins");
 
-const dbUrl =
-  "mongodb+srv://shashi123:1234@stocky.7yozs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+require('dotenv').config()
+
+const dbUrl = process.env.MONGO_URL;
 
 db.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
-    app.listen(port);
-    console.log(`Server running on http://localhost:${port}`);
+    app.listen(process.env.PORT);
+    console.log(`Server running`);
   })
   .catch((err) => console.log(err));
 
@@ -49,7 +49,6 @@ app.post("/savecn", (req, res) => {
 
 app.post("/deletecn", (req, res) => {
   const id = req.body.id;
-  console.log(`id = ${id}`);
 
   CoinImport.deleteOne({ id })
     .then(() => {
@@ -62,7 +61,6 @@ app.get("/getCoin", (req, res) => {
   CoinImport.find()
     .then((result) => {
       res.send(result);
-      console.log(result);
     })
     .catch((err) => console.log(err.name));
 });
