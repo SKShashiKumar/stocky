@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require("express");
 const app = express();
 const db = require("mongoose");
@@ -17,8 +18,21 @@ db.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use(cors());
+
+if(process.env.NODE_ENV === "production")
+{
+  app.use(express.static(path.join(__dirname,'/client/build')))
+
+  app.get('*',(req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+  })
+}
+else{
+  app.get('/',(req,res) => {
+    res.send("Api is Running")
+  })
+}
 
 app.post("/savecn", (req, res) => {
   const { id, cname, symbol, market_cap, current_price } = req.body;
@@ -41,7 +55,8 @@ app.post("/savecn", (req, res) => {
             .then((result) => console.log("Inserted"))
             .catch((err) => console.log(err));
         }
-        else{ console.log("Already Exist")}y
+        else{ console.log("Already Exist")}
+
     })
     .catch((err) => console.log(err));
 

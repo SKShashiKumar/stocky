@@ -42,6 +42,7 @@ const columns = [
         let abc = () =>  
         {
           let cn = params.row
+          alert(`Saved ${cn.cname}`)
     
          axios
           .post('http://localhost:8000/savecn', cn)

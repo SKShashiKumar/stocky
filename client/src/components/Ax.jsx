@@ -65,8 +65,10 @@ const columns = [
 
 export default function Ax()
 {
+    // let data2 = [];
     let [rows, setRows] = useState([])
     const [input, setInput] = useState("");
+    
     
     // function test(labelValue) {
     //   const sign = Math.sign(Number(labelValue));
@@ -82,17 +84,15 @@ export default function Ax()
     //     : Math.abs(Number(labelValue));
     // }
     
-      const fetchData = async () => {
-        await axios.get("/getCoin")
-        .then((data1) => {
-            let data2 = data1.data    
-            setRows(data2.map((x) => {
-              return ({'id':x.id,'cname':x.cname,'symbol':x.symbol,'market_cap':(x.market_cap),'current_price':(x.current_price)})  
-            }))        
-        })
-        .catch(err => console.log(err))
-      };
-    
+    const fetchData = async () => {
+      await axios.get("/getCoin")
+      .then((data1) => { setRows((data1.data).map((x) => {
+            return ({'id':x.id,'cname':x.cname,'symbol':x.symbol,'market_cap':(x.market_cap),'current_price':(x.current_price)})  
+      }))})
+      .catch(err => console.log(err))
+    };
+      
+        
       useEffect(() => {
         fetchData()
       });
