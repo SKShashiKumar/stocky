@@ -11,26 +11,20 @@ const dbUrl = process.env.MONGO_URL;
 
 db.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
-    app.listen(process.env.PORT);
+    app.listen(process.env.PORT || 8000);
     console.log(`Server running`);
   })
   .catch((err) => console.log(err));
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-if(process.env.NODE_ENV === "production")
-{
-  app.use(express.static(path.join(__dirname,'/client/build')))
+if ( process.env.NODE_ENV == "production"){
 
-  app.get('*',(req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-  })
-}
-else{
-  app.get('/',(req,res) => {
-    res.send("Api is Running")
+  app.use(express.static("./client/build"));
+  app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   })
 }
 
@@ -72,11 +66,11 @@ app.post("/deletecn", (req, res) => {
     .catch((err) => console.log(err.name));
 });
 
-app.get("/getCoin", (req, res) => {
+app.get("/getCoin", async (req, res) => {
   CoinImport.find()
     .then((result) => {
       res.send(result);
+      // console.log(result)
     })
     .catch((err) => console.log(err.name));
 });
-
