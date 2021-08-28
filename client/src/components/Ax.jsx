@@ -40,15 +40,12 @@ const columns = [
     renderCell: (params) => {
       let abc1 = async () => {
         let cn = params.row
-
-
-        axios
-          .post("/deletecn", cn)
-          .then((res) => alert('Coin Deleted'))
-          .catch(err => { console.error(err) })
+          axios.post("/deletecn", cn)
+              .then(res => alert('Coin Deleted'))
+              .catch(err => { console.error(err) })
       };
 
-      return <Button onClick={(e) => { e.preventDefault(); abc1() }}
+      return <Button onClick={(e) => {abc1();alert("Deleted");}}
         variant="contained" color="secondary"> Delete </Button>
     }
   },
@@ -67,18 +64,17 @@ export default function Ax() {
 
 
   const fetchData = async () => {
-    let data1 = await axios.get("/getCoin")
-    let data2 = data1.data
-    console.log(data2)
-    console.log(Array.isArray(data2))
-    setRows(data2.map((x) => {
+    const { data } = await axios.get("/getCoin")
+    console.log(data)
+
+    await setRows(data.map((x) => {
       return ({ 'id': x.id, 'cname': x.cname, 'symbol': x.symbol, 'market_cap': (x.market_cap), 'current_price': (x.current_price) })
     }))
   };
 
   useEffect(() => {
     fetchData()
-  }, []);
+  });
 
   const handleChange = e => {
     e.preventDefault()

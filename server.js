@@ -16,15 +16,15 @@ db.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   })
   .catch((err) => console.log(err));
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
 
 if ( process.env.NODE_ENV == "production"){
 
-  app.use(express.static("./client/build"));
+  app.use(express.static("client/build"));
   app.get("*", (req, res) => {
-      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   })
 }
 
@@ -56,21 +56,22 @@ app.post("/savecn", (req, res) => {
 
 });
 
+app.get("/getCoin", async (req, res) => {
+  CoinImport.find({}, (err, result) => {
+    if(err){
+      res.send(err)
+    } else {
+      res.send(result)
+    }
+  })
+});
+
 app.post("/deletecn", (req, res) => {
   const id = req.body.id;
 
   CoinImport.deleteOne({ id })
     .then(() => {
       console.log(`Deleted ${id}`);
-    })
-    .catch((err) => console.log(err.name));
-});
-
-app.get("/getCoin", async (req, res) => {
-  CoinImport.find()
-    .then((result) => {
-      res.send(result);
-      // console.log(result)
     })
     .catch((err) => console.log(err.name));
 });

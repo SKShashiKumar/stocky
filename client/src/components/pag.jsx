@@ -38,7 +38,7 @@ const columns = [
     headerClassName: 'bgprl',
     renderCell: (params) => {
 
-      let abc = () => {
+      let abc = (e) => {
         let cn = params.row
         alert(`Saved ${cn.cname}`)
 
@@ -48,12 +48,7 @@ const columns = [
           .catch(err => { console.error(err) })
       };
 
-      return <Button onClick={(e) => {
-        e.preventDefault()
-        abc()
-      }
-      }
-        variant="contained" color="primary"> Save </Button>
+      return <Button onClick={ (e) => { e.preventDefault();abc();} } variant="contained" color="primary"> Save </Button>
     }
   },
   {
