@@ -41,7 +41,7 @@ const columns = [
       let abc1 = async () => {
         let cn = params.row
           axios.delete("/deletecn", {data : cn})
-              .then(alert('Coin Deleted'))
+              .then(alert(`Coin ${cn.cname} Deleted`))
               .catch(err => { console.error(err) })
       };
 
@@ -63,17 +63,30 @@ export default function Ax() {
   const [input, setInput] = useState("");
 
 
-  const fetchData = async () => {
-    const { data } = await axios.get("/getCoin")
-    console.log(data)
-
-    await setRows(data.map((x) => {
-      return ({ 'id': x.id, 'cname': x.cname, 'symbol': x.symbol, 'market_cap': (x.market_cap), 'current_price': (x.current_price) })
-    }))
+  const fetchData = async (abortCont) => {
+    await axios.get("/getCoin",{signal : abortCont.signal})
+    .then(res => setRows(res.data.map((x) => 
+          {
+            return ({ 'id': x.id, 'cname': x.cname, 'symbol': x.symbol, 'market_cap': (x.market_cap), 'current_price': (x.current_price) })
+          }
+        )
+      )
+    )
+    .catch((err) => {
+        if(err.name === 'AbortError')
+        {
+          console.log('Fetch Aborted')
+        }
+        else{
+          console.log(err)
+        }
+    })
   };
 
   useEffect(() => {
-    fetchData()
+    const abortCont = new AbortController()
+    fetchData(abortCont)
+    return abortCont.abort()
   });
 
   const handleChange = e => {

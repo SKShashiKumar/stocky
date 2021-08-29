@@ -65,18 +65,35 @@ export default function Pag() {
   const [input, setInput] = useState("");
 
 
-  const fetchData = async () => {
-    const { data } = await axios.get(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_descpage=1&sparkline=false"
+  const fetchData = async (abortCont) => {
+    await axios.get(
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_descpage=1&sparkline=false",
+      {signal : abortCont.signal}
     )
-
-    await setRows(data.map((x) => {
-      return ({ 'id': x.market_cap_rank, 'cname': x.name, 'symbol': x.symbol, 'market_cap': (x.market_cap), 'current_price': (x.current_price) })
-    }))
+    .then(res => setRows(res.data.map((x) => 
+        {
+          return ({ 'id': x.market_cap_rank, 'cname': x.name, 'symbol': x.symbol, 'market_cap': (x.market_cap), 'current_price': (x.current_price) })
+        }
+        )
+      )
+    )
+    .catch((err) => 
+    {
+        if(err.name === 'AbortError')
+        {
+          console.log('Fetch Aborted')
+        }
+        else
+        {
+          console.log(err.message)
+        }
+    })
   };
 
   useEffect(() => {
-    fetchData()
+    const abortCont = new AbortController()
+    fetchData(abortCont)
+    return abortCont.abort()
   },[]);
 
   const handleChange = e => {
