@@ -40,12 +40,12 @@ const columns = [
     renderCell: (params) => {
       let abc1 = async () => {
         let cn = params.row
-          axios.post("/deletecn", cn)
-              .then(res => alert('Coin Deleted'))
+          axios.delete("/deletecn", {data : cn})
+              .then(alert('Coin Deleted'))
               .catch(err => { console.error(err) })
       };
 
-      return <Button onClick={(e) => {abc1();alert("Deleted");}}
+      return <Button onClick={(e) => {abc1();}}
         variant="contained" color="secondary"> Delete </Button>
     }
   },
